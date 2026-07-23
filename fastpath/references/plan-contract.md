@@ -66,6 +66,17 @@ For routine work, include this block in root `SNAPSHOTS.md`:
 - Prefer `task_id` and `line_start`/`line_end` over fuzzy heading search.
 - Update line ranges whenever the affected task section moves.
 - Keep `next_task` unique enough that the next routine turn does not need title discovery.
+- Keep routine fields small; move explanatory policy text to references instead of repeating it in snapshots.
+
+## Benchmark Cost Contract
+
+For fastpath benchmarks, record the three layers separately:
+
+- `Raw total`: input plus output, used to inspect total context traffic.
+- `Uncached total`: input minus cached input plus output, used to inspect new processing burden.
+- `Cost-equivalent`: regular input, cached input, `cache_write_tokens`, and output weighted by the actual model/service-tier price table.
+
+When calculating cost, separate `regular_input = input - cached_input - cache_write_tokens` to avoid double counting. If `cache_write_tokens` is unavailable, mark `cache_write_missing` and do not claim final cost success from Raw or Uncached alone.
 
 ## Detail Size Budget
 
@@ -95,6 +106,7 @@ Record these durable rules in `docs/AGENTS.md`:
 
 - Use index-first discovery and the known-task section fast path.
 - Keep the `SNAPSHOTS.md` Fast Path schema with `task_id`, line range, and compact final response budget.
+- For benchmark docs, treat actual cost reduction as the final skill goal and report Raw, Uncached, cache write, and Cost-equivalent.
 - Apply the language policy and user overrides.
 - Require plan-local `README.md`, `active/`, and `completed/`.
 - Require `Current task`/`Next task` state and linked title/progress/summary rows.
