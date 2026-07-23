@@ -1,4 +1,4 @@
 interface:
   display_name: "Fast Path For Plan Docs"
-  short_description: "Minimize plan-reading cost with task fast paths and indexes"
-  default_prompt: "Use $fastpath to read/update only the required plan task, keep outputs compact, and preserve Raw/Uncached/Cost-equivalent benchmark rules."
+  short_description: "Minimize plan-reading cost with low-context fast paths"
+  default_prompt: "Use $fastpath to read/update only the required plan task, trust valid SNAPSHOTS line ranges, avoid rediscovery, and keep outputs compact."
