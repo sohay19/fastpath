@@ -11,12 +11,12 @@ Reduce actual model cost: trust valid task pointers, read the minimum slice, avo
 
 ## Routine
 
-1. Read `SNAPSHOTS.md` once.
-2. If `mode: routine` has `plan_readme`, `detail_file`, current task id/heading, next task, and preferably `line_start`/`line_end`, trust it. No search, neighbors, or history.
+1. Read `SNAPSHOTS.md` once. If shell is available, bundle the first read in one command: Fast Path block, required plan state lines, then the detail line range.
+2. If `mode: routine` has `plan_readme`, `detail_file`, current task id/heading, next task, and preferably `line_start`/`line_end`, trust it. No search, neighbors, history, or broad plan scan.
 3. Read the plan state once only when required by project instructions or state update. Read the detail line range; without a range, read only the exact heading section.
-4. Update only touched task/state/snapshot/HANDOFF fields, preserving compact line ranges.
+4. Update only touched task/state/snapshot/HANDOFF fields, preserving compact line ranges and next routine pointers.
 5. Run narrow verification only. Do not reread docs for summary.
-6. Final: one line with task, result, verification id, exact/protocol if known.
+6. Avoid todo lists, interim status explanations, and repeated summaries during routine work or benchmarks unless the user asks. Final: one compact line with task, result, verification id, exact/protocol if known.
 
 ## Discovery
 

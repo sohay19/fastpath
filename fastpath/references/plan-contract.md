@@ -43,20 +43,22 @@ Then include a linked table:
 
 ## SNAPSHOTS Fast Path
 
-For routine work, keep this block in root `SNAPSHOTS.md` compact enough to act as the decision record:
+For routine work, keep this block at the top of root `SNAPSHOTS.md`, compact enough to act as the decision record and first-read bundle:
 
 ```markdown
 ## Fast Path
 
 - mode: routine
+- progress: `35/42`
 - plan_readme: `docs/plans/<plan>/README.md`
-- state_read: once when project protocol or state update requires it
+- state_query: `Progress / Current task / Next task`
 - detail_file: `docs/plans/<plan>/active/<file>.md`
 - task_id: `P1-32`
 - heading: `P1-32. Title`
 - anchor: `#p1-32-title`
 - line_start: 123
 - line_end: 145
+- read_bundle: `SNAPSHOTS Fast Path + plan state query + detail line range`
 - next_task: `P1-33. Title`
 - next_detail_file: `docs/plans/<plan>/active/<file>.md`
 - final_response_budget: one line: task/result/verification/exact-protocol
@@ -64,6 +66,8 @@ For routine work, keep this block in root `SNAPSHOTS.md` compact enough to act a
 
 - Use `mode: discovery` when the current task is unknown; keep known `plan_readme` and next task fields.
 - Prefer `task_id` and `line_start`/`line_end` over fuzzy heading search.
+- Keep the Fast Path block near the file top so routine turns can read a bounded prefix instead of the full snapshot.
+- Prefer one bundled first read over separate snapshot/state/detail reads when tooling allows it.
 - Update line ranges whenever the affected task section moves.
 - Keep `next_task` unique enough that the next routine turn does not need title discovery.
 - Keep routine fields small; do not repeat cost philosophy, benchmark formulas, or long policy text in snapshots.
@@ -99,9 +103,11 @@ If the user does not choose, use step-level for a large plan and phase-level for
 Record these durable rules in `docs/AGENTS.md`:
 
 - If `SNAPSHOTS.md` Fast Path is valid, trust it and do not rediscover.
+- Prefer one bundled first read: Fast Path, required plan state, and exact detail slice.
 - With `line_start`/`line_end`, read only that detail slice.
 - Read plan state once only when required by project protocol or state update.
-- Keep final responses one-line compact; keep benchmark formulas in project-local test docs or runners.
+- Avoid todo lists/interim summaries in routine benchmark-like work; keep final responses one-line compact.
+- Keep benchmark formulas in project-local test docs or runners.
 - Apply the language policy and user overrides.
 - Require plan-local `README.md`, `active/`, and `completed/`.
 - Require `Current task`/`Next task` state and linked title/progress/summary rows.
