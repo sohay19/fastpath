@@ -3,53 +3,33 @@ name: fastpath
 description: Minimize plan-reading cost with low-context task fast paths, behavior rules, and indexes
 ---
 
-# Fast Path For Plan Docs
+# Fast Path
 
 ## Goal
 
-Reduce actual model cost by changing routine behavior: read less, search less, repeat less, and write shorter outputs while preserving plan correctness.
-
-Do not calculate benchmark cost unless project-specific benchmark instructions ask for it. Cost formulas, prices, and success judgments belong to the project or runner; this skill only provides cost-saving behavior rules.
-
-## Cost-Saving Rules
-
-- Trust a valid routine Fast Path instead of rediscovering task location.
-- Prefer `task_id` and `line_start`/`line_end`; if a line range exists, do not search headings or read neighboring tasks.
-- Read the smallest sufficient document slice, then stop reading.
-- Treat references as conditional; load them only for init, migration, restructuring, or explicit missing facts.
-- Keep persistent plan/snapshot text compact. Do not add benchmark formulas or long policy explanations unless the project asks.
-- Keep final replies short and inside the recorded response budget.
+Reduce actual model cost: trust valid task pointers, read the minimum slice, avoid rediscovery, write compactly.
 
 ## Routine
 
-For ordinary progress on a known planned task:
-
 1. Read `SNAPSHOTS.md` once.
-2. If `## Fast Path` has `mode: routine`, `plan_readme`, `detail_file`, `task_id` or `heading`/`anchor`, next task info, and preferably `line_start`/`line_end`, trust it. Do not rediscover.
-3. Read only the plan README top state block and the detail line range. If no range exists, read only the exact current heading section.
-4. Apply the update, including current/next task and line-range maintenance when needed.
-5. Run only narrow verification, then do not reread docs just to summarize.
-6. Final reply: task/result, verification id, exact/protocol if known. No document recap or success log.
+2. If `mode: routine` has `plan_readme`, `detail_file`, current task id/heading, next task, and preferably `line_start`/`line_end`, trust it. No search, neighbors, or history.
+3. Read the plan state once only when required by project instructions or state update. Read the detail line range; without a range, read only the exact heading section.
+4. Update only touched task/state/snapshot/HANDOFF fields, preserving compact line ranges.
+5. Run narrow verification only. Do not reread docs for summary.
+6. Final: one line with task, result, verification id, exact/protocol if known.
 
 ## Discovery
 
-Use only when Fast Path fields are missing or conflict.
-
-- Exact link: open it.
-- Id/title only: one bounded `rg -n` over indexes/headings, then the matching section.
-- Unknown task: read `docs/plans/README.md`, selected plan README state block, then one required detail.
-- Do not read unrelated plans, completed history, phase overviews, full detail files, or `docs/AGENTS.md` unless the missing fact requires it.
+Only when Fast Path is missing/conflicting: exact link first; id/title gets one bounded `rg -n`; unknown task reads root plan index, selected state block, and one required detail. Do not read unrelated plans, full histories, phase overviews, full detail files, or `docs/AGENTS.md` unless needed.
 
 ## Write / Verify
 
-- Update only the affected task, plan README state block/table row, `SNAPSHOTS.md`, and compact `HANDOFF.md` if it already exists.
-- Routine verification: narrow helper if present; otherwise affected Markdown links and `git diff --check`.
-- Full structural checks only for init, migration, or contract edits.
-- Avoid large stable-prefix rewrites unless they make future routine reads smaller.
+- Keep snapshots/project instructions free of benchmark formulas, prices, or long policy text.
+- Prefer narrow helper; otherwise affected links and `git diff --check`.
+- Full structural checks/reference loads only for init, migration, restructuring, schema changes, or explicit missing facts.
 
 ## References
 
-- Read [references/init-and-migration.md](references/init-and-migration.md) only for `fastpath init`, contract installation, or migration.
-- Read [references/plan-contract.md](references/plan-contract.md) only for creating, splitting, restructuring, Fast Path schema changes, or structural checks.
-- Read [references/language-policy.md](references/language-policy.md) only for document creation, label/name changes, or language choice.
-- Do not load references during routine progress unless required.
+- Init/migration: [init-and-migration.md](references/init-and-migration.md)
+- Contract/schema: [plan-contract.md](references/plan-contract.md)
+- Language/naming: [language-policy.md](references/language-policy.md)
