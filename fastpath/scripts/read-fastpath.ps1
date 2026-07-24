@@ -1,7 +1,11 @@
 param(
     [string]$Root = '.',
-    [string]$Snapshot = 'SNAPSHOTS.md',
+    [Alias('Snapshot')]
+    [string]$SnapshotPath = 'SNAPSHOTS.md',
     [string]$PlanReadme = '',
+    [string]$DetailFile = '',
+    [int]$LineStart = 0,
+    [int]$LineEnd = 0,
     [switch]$NoDetail
 )
 
@@ -39,7 +43,7 @@ function Get-FastField([string[]]$Lines, [string]$Name, [switch]$Required) {
     return ''
 }
 
-$snapshotLines = @(Read-DocLines $Snapshot)
+$snapshotLines = @(Read-DocLines $SnapshotPath)
 $fastStart = [Array]::IndexOf($snapshotLines, '## Fast Path')
 if ($fastStart -lt 0) { throw 'Fast Path block missing' }
 $fastEnd = $snapshotLines.Count
@@ -49,13 +53,14 @@ for ($i = $fastStart + 1; $i -lt $snapshotLines.Count; $i++) {
 $fastBlock = @($snapshotLines[$fastStart..($fastEnd - 1)])
 
 if (-not $PlanReadme) { $PlanReadme = Get-FastField $fastBlock 'plan_readme' -Required }
-$detailFile = Get-FastField $fastBlock 'detail_file' -Required
-$lineStartText = Get-FastField $fastBlock 'line_start' -Required
-$lineEndText = Get-FastField $fastBlock 'line_end' -Required
-$lineStart = [int]$lineStartText
-$lineEnd = [int]$lineEndText
+if (-not $DetailFile) { $DetailFile = Get-FastField $fastBlock 'detail_file' -Required }
+if ($LineStart -le 0) { $LineStart = [int](Get-FastField $fastBlock 'line_start' -Required) }
+if ($LineEnd -le 0) { $LineEnd = [int](Get-FastField $fastBlock 'line_end' -Required) }
+$lineStart = $LineStart
+$lineEnd = $LineEnd
 if ($lineStart -lt 1 -or $lineEnd -lt $lineStart) { throw "invalid line range: $lineStart-$lineEnd" }
 
+Write-Output ('FASTPATH_SOURCE snapshot={0} plan_readme={1} detail_file={2} lines={3}-{4}' -f $SnapshotPath, $PlanReadme, $DetailFile, $lineStart, $lineEnd)
 Write-Output 'FASTPATH_BEGIN'
 $fastBlock
 Write-Output 'PLAN_STATE_BEGIN'
@@ -66,7 +71,7 @@ foreach ($pattern in @('^Completed .* tasks:', '^Current task:', '^Next task:'))
 }
 if (-not $NoDetail) {
     Write-Output 'DETAIL_BEGIN'
-    $detailLines = @(Read-DocLines $detailFile)
+    $detailLines = @(Read-DocLines $DetailFile)
     if ($lineEnd -gt $detailLines.Count) { throw "line_end exceeds detail file length: $lineEnd" }
     for ($lineNo = $lineStart; $lineNo -le $lineEnd; $lineNo++) {
         '{0}: {1}' -f $lineNo, $detailLines[$lineNo - 1]

@@ -58,6 +58,7 @@ For routine work, keep this block at the top of root `SNAPSHOTS.md`, compact eno
 - anchor: `#p1-32-title`
 - line_start: 123
 - line_end: 145
+- read_args: `-SnapshotPath .\SNAPSHOTS.md -PlanReadme docs/plans/<plan>/README.md -DetailFile docs/plans/<plan>/active/<file>.md -LineStart 123 -LineEnd 145`
 - read_bundle: `SNAPSHOTS Fast Path + plan state query + detail line range`
 - next_task: `P1-33. Title`
 - next_detail_file: `docs/plans/<plan>/active/<file>.md`
@@ -66,6 +67,7 @@ For routine work, keep this block at the top of root `SNAPSHOTS.md`, compact eno
 
 - Use `mode: discovery` when the current task is unknown; keep known `plan_readme` and next task fields.
 - Prefer `task_id` and `line_start`/`line_end` over fuzzy heading search.
+- Prefer `read_args` when a helper is available; keep document paths explicit so benchmark protocols can see the source documents in the command.
 - Keep the Fast Path block near the file top so routine turns can read a bounded prefix instead of the full snapshot.
 - Prefer one bundled first read over separate snapshot/state/detail reads when tooling allows it.
 - Update line ranges whenever the affected task section moves.
@@ -104,6 +106,7 @@ Record these durable rules in `docs/AGENTS.md`:
 
 - If `SNAPSHOTS.md` Fast Path is valid, trust it and do not rediscover.
 - Prefer one bundled first read: Fast Path, required plan state, and exact detail slice.
+- If `read_args` exists, call the bundled helper once with those explicit args instead of hand-building a read command.
 - With `line_start`/`line_end`, read only that detail slice.
 - Read plan state once only when required by project protocol or state update.
 - Avoid todo lists/interim summaries in routine benchmark-like work; keep final responses one-line compact.
