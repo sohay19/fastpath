@@ -1,4 +1,4 @@
 interface:
   display_name: "Fast Path For Plan Docs"
   short_description: "Minimize plan-reading cost with low-context fast paths"
-  default_prompt: "Use $fastpath: one bundled first read when possible (SNAPSHOTS Fast Path + required state + exact detail slice); trust valid line ranges; no rediscovery/todo/interim summaries; update narrowly; final one line."
+  default_prompt: "Use $fastpath: run the read-fastpath helper for structured routine tasks when available; trust valid line ranges; no rediscovery/todo/interim summaries; update narrowly; final one line."

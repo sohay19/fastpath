@@ -11,7 +11,7 @@ Reduce actual model cost: trust valid task pointers, read the minimum slice, avo
 
 ## Routine
 
-1. Read `SNAPSHOTS.md` once. If shell is available, bundle the first read in one command: Fast Path block, required plan state lines, then the detail line range.
+1. Read `SNAPSHOTS.md` once. If shell and `CODEX_HOME` are available, prefer `powershell -NoProfile -ExecutionPolicy Bypass -File "$env:CODEX_HOME\skills\fastpath\scripts\read-fastpath.ps1"` for the first read; otherwise bundle Fast Path, required plan state lines, and detail line range in one command.
 2. If `mode: routine` has `plan_readme`, `detail_file`, current task id/heading, next task, and preferably `line_start`/`line_end`, trust it. No search, neighbors, history, or broad plan scan.
 3. Read the plan state once only when required by project instructions or state update. Read the detail line range; without a range, read only the exact heading section.
 4. Update only touched task/state/snapshot/HANDOFF fields, preserving compact line ranges and next routine pointers.
