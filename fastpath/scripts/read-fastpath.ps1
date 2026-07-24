@@ -67,8 +67,13 @@ $fastBlock = @($snapshotLines[$fastStart..($fastEnd - 1)])
 
 if (-not $PlanReadme) { $PlanReadme = Get-FastField $fastBlock 'plan_readme' -Required }
 if (-not $NoDetail) {
-    if (-not $DetailFile) { $DetailFile = Get-FastField $fastBlock 'detail_file' -Required }
-    if (Test-FastNone $DetailFile) { throw 'detail_file is unavailable; use -NoDetail or select a current task first' }
+    if (-not $DetailFile) { $DetailFile = Get-FastField $fastBlock 'detail_file' }
+    if (Test-FastNone $DetailFile) {
+        $NoDetail = $true
+        $DetailFile = ''
+    }
+}
+if (-not $NoDetail) {
     if ($LineStart -le 0) { $LineStart = Get-FastIntField $fastBlock 'line_start' }
     if ($LineEnd -le 0) { $LineEnd = Get-FastIntField $fastBlock 'line_end' }
     if ($LineStart -lt 1 -or $LineEnd -lt $LineStart) { throw "invalid line range: $LineStart-$LineEnd" }

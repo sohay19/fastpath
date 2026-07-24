@@ -58,8 +58,8 @@ For routine work, keep this block at the top of root `SNAPSHOTS.md`, compact eno
 - anchor: `#p1-32-title`
 - line_start: 123
 - line_end: 145
-- read_command: `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\fastpath-read.ps1 -SnapshotPath .\SNAPSHOTS.md -PlanReadme docs/plans/<plan>/README.md -DetailFile docs/plans/<plan>/active/<file>.md -LineStart 123 -LineEnd 145 -Compact`
-- read_args: `-SnapshotPath .\SNAPSHOTS.md -PlanReadme docs/plans/<plan>/README.md -DetailFile docs/plans/<plan>/active/<file>.md -LineStart 123 -LineEnd 145 -Compact`
+- read_command: `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\fastpath-read.ps1 -SnapshotPath .\SNAPSHOTS.md -Compact`
+- read_args: `-SnapshotPath .\SNAPSHOTS.md -Compact`
 - read_bundle: `SNAPSHOTS Fast Path + plan state query + detail line range`
 - next_task: `P1-33. Title`
 - next_detail_file: `docs/plans/<plan>/active/<file>.md`
@@ -68,8 +68,8 @@ For routine work, keep this block at the top of root `SNAPSHOTS.md`, compact eno
 
 - Use `mode: discovery` when the current task is unknown; keep known `plan_readme` and next task fields.
 - Prefer `task_id` and `line_start`/`line_end` over fuzzy heading search.
-- Prefer a stable repo-local `read_command` when available; it should call `.\tools\fastpath-read.ps1` and keep document paths explicit so benchmark protocols can see the source documents in the command.
-- Use `read_args` with `-Compact` when `read_command` is absent; prefer the repo-local wrapper before the installed skill path to avoid run-specific helper paths in command logs.
+- Prefer a stable repo-local auto helper command. It should call `.\tools\fastpath-read.ps1 -SnapshotPath .\SNAPSHOTS.md -Compact`; the helper infers `plan_readme`, `detail_file`, and line range from the Fast Path block and prints them in `FASTPATH_SOURCE`.
+- Use explicit long `read_command`/`read_args` only when auto helper inference fails. Avoid regex-parsing `read_command`; that usually costs more than a direct helper call.
 - Keep the Fast Path block near the file top so routine turns can read a bounded prefix instead of the full snapshot.
 - Prefer one bundled first read over separate snapshot/state/detail reads when tooling allows it.
 - Update line ranges whenever the affected task section moves.
@@ -109,8 +109,8 @@ Record these durable rules in `docs/AGENTS.md`:
 - If `SNAPSHOTS.md` Fast Path is valid, trust it and do not rediscover.
 - Prefer one bundled first read: Fast Path, required plan state, and exact detail slice.
 - Do not tool-read the active `fastpath` `SKILL.md` during routine work; use the already-loaded contract.
-- If `read_command` exists, run it once exactly, adding `-Compact` only when missing.
-- If only `read_args` exists, call `.\tools\fastpath-read.ps1` once with those explicit args and `-Compact` instead of hand-building a read command; fall back to the installed helper only when the wrapper is unavailable.
+- Prefer `.\tools\fastpath-read.ps1 -SnapshotPath .\SNAPSHOTS.md -Compact` once. Accept its `FASTPATH_SOURCE` output as the snapshot/plan/detail provenance.
+- If auto helper inference fails, then use explicit `read_command` or call `.\tools\fastpath-read.ps1` once with `read_args`; fall back to the installed helper only when the wrapper is unavailable.
 - With `line_start`/`line_end`, read only that detail slice.
 - Read plan state once only when required by project protocol or state update.
 - Avoid todo lists/interim summaries in routine benchmark-like work; keep final responses one-line compact.

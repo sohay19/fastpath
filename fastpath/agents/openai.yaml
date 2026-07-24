@@ -1,4 +1,4 @@
 interface:
   display_name: "Fast Path For Plan Docs"
   short_description: "Minimize plan-reading cost with low-context fast paths"
-  default_prompt: "Use $fastpath: routine = no SKILL.md reread; run read_command once, else .\\tools\\fastpath-read.ps1 read_args -Compact; no hand-built reads unless helper fails; final one line."
+  default_prompt: "Use $fastpath: routine = no SKILL.md reread; first run .\\tools\\fastpath-read.ps1 -SnapshotPath .\\SNAPSHOTS.md -Compact once; no read_command parsing or hand-built reads unless helper fails; final one line."
