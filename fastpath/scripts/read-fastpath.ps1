@@ -6,7 +6,8 @@ param(
     [string]$DetailFile = '',
     [int]$LineStart = 0,
     [int]$LineEnd = 0,
-    [switch]$NoDetail
+    [switch]$NoDetail,
+    [switch]$Compact
 )
 
 $ErrorActionPreference = 'Stop'
@@ -77,8 +78,10 @@ $sourceDetail = if ($DetailFile) { $DetailFile } else { 'none' }
 $sourceLines = if ($NoDetail) { 'none' } else { '{0}-{1}' -f $LineStart, $LineEnd }
 
 Write-Output ('FASTPATH_SOURCE snapshot={0} plan_readme={1} detail_file={2} lines={3}' -f $SnapshotPath, $PlanReadme, $sourceDetail, $sourceLines)
-Write-Output 'FASTPATH_BEGIN'
-$fastBlock
+if (-not $Compact) {
+    Write-Output 'FASTPATH_BEGIN'
+    $fastBlock
+}
 Write-Output 'PLAN_STATE_BEGIN'
 $planLines = @(Read-DocLines $PlanReadme)
 foreach ($pattern in @('^Completed .* tasks:', '^Current task:', '^Next task:')) {

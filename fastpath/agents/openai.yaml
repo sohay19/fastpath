@@ -1,4 +1,4 @@
 interface:
   display_name: "Fast Path For Plan Docs"
   short_description: "Minimize plan-reading cost with low-context fast paths"
-  default_prompt: "Use $fastpath: run read-fastpath with explicit -SnapshotPath/-PlanReadme args for structured routine tasks; trust valid line ranges; no rediscovery/todo/interim summaries; final one line."
+  default_prompt: "Use $fastpath: for structured routine tasks run read-fastpath first with explicit -SnapshotPath/-PlanReadme and -Compact; no hand-built reads unless helper fails; final one line."
