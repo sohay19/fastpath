@@ -11,8 +11,8 @@ Reduce actual model cost: trust valid task pointers, use the compact helper, avo
 
 ## Routine
 
-1. Structured routine first read: run `powershell -NoProfile -ExecutionPolicy Bypass -File "$env:CODEX_HOME\skills\fastpath\scripts\read-fastpath.ps1" -SnapshotPath .\SNAPSHOTS.md -PlanReadme <plan-readme> -Compact`; add `-DetailFile`, `-LineStart`, `-LineEnd`, or `-NoDetail` when known. If `read_args` is visible, use it and add `-Compact` when missing. Hand-build reads only if the helper is unavailable or fails.
-2. If `mode: routine` has `plan_readme`, `detail_file`, current task id/heading, next task, and preferably `line_start`/`line_end` or `read_args`, trust it. No search, neighbors, history, or broad plan scan.
+1. Structured routine first read: if `read_command` is visible, run it once exactly, adding `-Compact` only when missing. Else run `.\tools\fastpath-read.ps1 <read_args> -Compact` when that wrapper exists; else run `$env:CODEX_HOME\skills\fastpath\scripts\read-fastpath.ps1 <read_args> -Compact`. Hand-build reads only if the helper is unavailable or fails.
+2. Routine turns must not tool-read `SKILL.md`; this contract is already active. If `mode: routine` has `plan_readme`, `detail_file`, current task id/heading, next task, and preferably `line_start`/`line_end`, `read_command`, or `read_args`, trust it. No search, neighbors, history, or broad plan scan.
 3. Read the plan state once only when required by project instructions or state update. Read the detail line range; without a range, read only the exact heading section.
 4. Update only touched task/state/snapshot/HANDOFF fields, preserving compact line ranges and next routine pointers.
 5. Run narrow verification only. Do not reread docs for summary.
